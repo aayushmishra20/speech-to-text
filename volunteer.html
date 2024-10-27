@@ -11,17 +11,57 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            color: #333;
+            color: #ffffff;
+            text-align: center;
+        } 
+        
+         header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        header img {
+            max-height: 60px;
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
             text-align: center;
         }
 
+        nav a {
+            display: inline-block;
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+
         .form-container {
-            background-color: white;
+            background : url('https://assets.onecompiler.app/4248uz6a4/42w8ccn5r/pexels-photo-461049-640x519.jpeg') no-repeat center center/cover;
+           background-image: 90%;
             padding: 40px;
             margin: 50px auto;
             width: 60%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
         }
 
         form {
@@ -36,11 +76,19 @@
         input, textarea {
             padding: 10px;
             margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 1px solid #dddddd82;
+            border-radius: 6px;
             width: 100%;
             box-sizing: border-box;
         }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
 
         .button {
             background-color: #4CAF50;
@@ -58,7 +106,20 @@
 </head>
 
 <body>
+  
+  <header>
+        <img src="https://assets.onecompiler.app/4248uz6a4/42w8ccn5r/WhatsApp%20Image%202024-10-22%20at%2019.51.42_fdbe486a%20(1).png" alt="Logo">
+        <h1>Good Shepherd Educational and Rural Development Society (GSERDS)</h1>
+    </header>
 
+    
+
+     <nav>
+        <a href="index.html">Home</a>
+        <a href="#Volunteer">Volunteer</a>
+        <a href="programs.html">Programs</a>
+    </nav>
+    
     <div class="form-container">
         <h2>Volunteer Form</h2>
         <form action="/send-email" method="POST">
@@ -78,6 +139,11 @@
         </form>
     </div>
 
+     <footer>
+        <p>Contact us at:</p>
+        <a herf="gserds2017@gmail.com"> gserds2017@gmail.com</a>
+    </footer>
+    
 </body>
 
 </html>
