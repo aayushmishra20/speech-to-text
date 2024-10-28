@@ -13,9 +13,9 @@
             background-color: #f4f4f4;
             color: #ffffff;
             text-align: center;
-        } 
-        
-         header {
+        }
+
+        header {
             background-color: #4CAF50;
             color: white;
             padding: 20px;
@@ -53,10 +53,8 @@
             color: black;
         }
 
-
         .form-container {
-            background : url('https://assets.onecompiler.app/4248uz6a4/42w8ccn5r/pexels-photo-461049-640x519.jpeg') no-repeat center center/cover;
-           background-image: 90%;
+            background: url('https://assets.onecompiler.app/4248uz6a4/42w8ccn5r/pexels-photo-461049-640x519.jpeg') no-repeat center center/cover;
             padding: 40px;
             margin: 50px auto;
             width: 60%;
@@ -73,7 +71,8 @@
             margin: 10px 0 5px 0;
         }
 
-        input, textarea {
+        input,
+        textarea {
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #dddddd82;
@@ -81,14 +80,13 @@
             width: 100%;
             box-sizing: border-box;
         }
-        
+
         footer {
             background-color: #333;
             color: white;
             text-align: center;
             padding: 20px;
         }
-
 
         .button {
             background-color: #4CAF50;
@@ -102,27 +100,40 @@
         .button:hover {
             background-color: #45a049;
         }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 
 <body>
-  
-  <header>
+
+    <header>
         <img src="https://assets.onecompiler.app/4248uz6a4/42w8ccn5r/WhatsApp%20Image%202024-10-22%20at%2019.51.42_fdbe486a%20(1).png" alt="Logo">
         <h1>Good Shepherd Educational and Rural Development Society (GSERDS)</h1>
     </header>
 
-    
-
-     <nav>
+    <nav>
         <a href="index.html">Home</a>
         <a href="#Volunteer">Volunteer</a>
         <a href="programs.html">Programs</a>
     </nav>
-    
+
     <div class="form-container">
         <h2>Volunteer Form</h2>
-        <form action="/send-email" method="POST">
+        <form id="volunteerForm">
             <label for="name">Full Name</label>
             <input type="text" id="name" name="name" required>
 
@@ -139,11 +150,44 @@
         </form>
     </div>
 
-     <footer>
+    <footer>
         <p>Contact us at:</p>
-        <a herf="gserds2017@gmail.com"> gserds2017@gmail.com</a>
+        <a href="mailto:gserds2017@gmail.com">gserds2017@gmail.com</a>
     </footer>
-    
+
+    <div id="popup" class="popup">Email sent successfully!</div>
+
+    <script>
+        document.getElementById('volunteerForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(this);
+
+            fetch('http://localhost:3000/send-email', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Show popup notification
+                        const popup = document.getElementById('popup');
+                        popup.style.display = 'block';
+
+                        // Redirect to home after a delay
+                        setTimeout(() => {
+                            window.location.href = 'index.html'; // Redirect to the home page
+                        }, 2000); // 2 seconds delay
+                    } else {
+                        alert('Error sending email. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error sending email. Please try again.');
+                });
+        });
+    </script>
+
 </body>
 
 </html>
