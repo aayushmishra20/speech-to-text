@@ -159,35 +159,36 @@
 
     <script>
         document.getElementById('volunteerForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
+            event.preventDefault(); // Prevent default form submission
+        
             const formData = new FormData(this);
-
-            fetch('http://localhost:3000/send-email', {
+        
+            fetch('/api/send-email', {
                 method: 'POST',
-                body: new URLSearchParams(formData)
+                body: new URLSearchParams(formData),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
             })
-                .then(response => {
-                    if (response.ok) {
-                        // Show popup notification
-                        const popup = document.getElementById('popup');
-                        popup.style.display = 'block';
-
-                        // Redirect to home after a delay
-                        setTimeout(() => {
-                            window.location.href = 'index.html'; // Redirect to the home page
-                        }, 2000); // 2 seconds delay
-                    } else {
-                        alert('Error sending email. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+            .then(response => {
+                if (response.ok) {
+                    const popup = document.getElementById('popup');
+                    popup.style.display = 'block';
+        
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
                     alert('Error sending email. Please try again.');
-                });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending email. Please try again.');
+            });
         });
+        
     </script>
-
 </body>
 
 </html>
