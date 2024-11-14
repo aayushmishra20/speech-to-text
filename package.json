@@ -1,12 +1,5 @@
 {
-  "dependencies": {
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "express": "^4.21.1",
-    "node.js": "^0.0.1-security",
-    "nodemailer": "^6.9.16"
-  },
-  "name": "gserd-website",
+  "name": "speech-to-text",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -15,5 +8,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@google-cloud/speech": "^6.7.0",
+    "@google-cloud/translate": "^8.5.0",
+    "express": "^4.21.1",
+    "google-auth-library": "^9.14.2"
+  }
 }
