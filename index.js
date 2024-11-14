@@ -19,7 +19,7 @@ async function transcribeAudio(filePath) {
         encoding: "LINEAR16",
         sampleRateHertz: 16000,
         languageCode: "ta-IN", // Tamil as the primary language
-        alternativeLanguageCodes: ["te-IN", "kn-IN", "ml-IN"], // Telugu, Kannada, Malayalam
+        alternativeLanguageCodes: ["hi-IN", "pa-IN", "te-IN", "kn-IN", "ml-IN"], // Telugu, Kannada, Malayalam
     };
 
     const request = {
