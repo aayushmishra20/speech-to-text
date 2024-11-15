@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
   const languageCode = req.body.languageCode || 'hi-IN';  // Default to Hindi if no languageCode provided
 
   // You can allow for languages like 'hi-IN' (Hindi), 'ta-IN' (Tamil), or others.
-  const supportedLanguages = ['hi-IN', 'ta-IN'];  // You can add more languages if needed
+  const supportedLanguages = ['hi-IN', 'ta-IN', 'en-IN'];  // You can add more languages if needed
 
   // Validate language code
   if (!supportedLanguages.includes(languageCode)) {
