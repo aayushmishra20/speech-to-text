@@ -14,6 +14,15 @@ module.exports = async (req, res) => {
   }
 
   const audioContent = req.body.audioContent;
+  const languageCode = req.body.languageCode || 'hi-IN';  // Default to Hindi if no languageCode provided
+
+  // You can allow for languages like 'hi-IN' (Hindi), 'ta-IN' (Tamil), or others.
+  const supportedLanguages = ['hi-IN', 'ta-IN'];  // You can add more languages if needed
+
+  // Validate language code
+  if (!supportedLanguages.includes(languageCode)) {
+    return res.status(400).json({ error: 'Unsupported language code. Please use "hi-IN" for Hindi or "ta-IN" for Tamil.' });
+  }
 
   const request = {
     audio: {
@@ -22,7 +31,7 @@ module.exports = async (req, res) => {
     config: {
       encoding: 'LINEAR16',
       sampleRateHertz: 16000,
-      languageCode: 'auto',
+      languageCode: languageCode,  // Use the provided language code
     },
   };
 
