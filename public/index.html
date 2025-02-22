@@ -1,14 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speech-to-Text Translator</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
-  </head>
-  <style>
-  body {
+</head>
+<body>
+  <div class="container">
+    <div class="overlay-top"></div>
+    <div class="overlay-bottom"></div>
+    
+    <h1>Speech-to-Text Translator</h1>
+    
+    <div class="button-group">
+      <button id="startButton" class="start-button">Start Listening</button>
+      <button id="stopButton" disabled class="stop-button">Stop Listening</button>
+      <button id="clearButton" class="clear-button">Clear Output</button>
+    </div>
+    
+    <div id="output" class="output"></div>
+    
+    <button id="downloadButton" class="download-button hidden">Download as PDF</button>
+  </div>
+
+  <script>
+    let recognition;
+    let finalText = '';
+    const output = document.getElementById('output');
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const clearButton = document.getElementById('clearButton');
+    const downloadButton = document.getElementById('downloadButton');
+
+    function initSpeechRecognition() {
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'auto';
+      recognition.continuous = true;
+
+      recognition.onresult = async (event) => {
+        const speechText = event.results[event.results.length - 1][0].transcript;
+        output.innerHTML += `<p class='detected-text'>Detected: <span>${speechText}</span></p>`;
+
+        const response = await fetch('/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: speechText })
+        });
+        const data = await response.json();
+        output.innerHTML += `<p class='translated-text'>Translated: <span>${data.translatedText}</span></p>`;
+        finalText += `\n${data.translatedText}`;
+        downloadButton.classList.remove('hidden');
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Recognition error:", event.error);
+      };
+    }
+
+    startButton.onclick = () => {
+      startButton.disabled = true;
+      stopButton.disabled = false;
+      stopButton.classList.remove('disabled');
+      initSpeechRecognition();
+      recognition.start();
+    };
+
+    stopButton.onclick = () => {
+      startButton.disabled = false;
+      stopButton.disabled = true;
+      stopButton.classList.add('disabled');
+      recognition.stop();
+    };
+
+    clearButton.onclick = () => {
+      output.innerHTML = "";
+      finalText = "";
+      downloadButton.classList.add('hidden');
+    };
+
+    downloadButton.onclick = () => {
+      const doc = new jsPDF();
+      doc.text(finalText, 10, 10);
+      doc.save('transcription.pdf');
+    };
+  </script>
+</body>
+</html>
+
+<style>
+body {
   background: linear-gradient(to bottom right, #90CDF4, #9F7AEA);
   min-height: 100vh;
   display: flex;
@@ -56,7 +138,7 @@ h1 {
   gap: 10px;
 }
 
-.start-button, .stop-button, .download-button {
+.start-button, .stop-button, .clear-button, .download-button {
   padding: 10px 20px;
   border-radius: 20px;
   font-size: 16px;
@@ -79,6 +161,11 @@ h1 {
   opacity: 0.5;
 }
 
+.clear-button {
+  background: #ED8936;
+  color: white;
+}
+
 .download-button {
   background: #3182CE;
   color: white;
@@ -92,7 +179,6 @@ h1 {
   border-radius: 10px;
   text-align: left;
   height: 400px;
-  
   overflow-y: auto;
   margin-top: 20px;
 }
@@ -111,77 +197,3 @@ h1 {
   display: none;
 }
 </style>
-
-<body>
-  <div class="container">
-    <div class="overlay-top"></div>
-    <div class="overlay-bottom"></div>
-    
-    <h1>Speech-to-Text Translator</h1>
-    
-    <div class="button-group">
-      <button id="startButton" class="start-button">Start Listening</button>
-      <button id="stopButton" disabled class="stop-button">Stop Listening</button>
-    </div>
-    
-    <div id="output" class="output"></div>
-    
-    <button id="downloadButton" class="download-button hidden">Download as PDF</button>
-  </div>
-
-  <script>
-    let recognition;
-    let finalText = '';
-    const output = document.getElementById('output');
-    const startButton = document.getElementById('startButton');
-    const stopButton = document.getElementById('stopButton');
-    const downloadButton = document.getElementById('downloadButton');
-
-    function initSpeechRecognition() {
-      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'auto';
-      recognition.continuous = true;
-
-      recognition.onresult = async (event) => {
-        const speechText = event.results[event.results.length - 1][0].transcript;
-        output.innerHTML += `<p class='detected-text'>Detected: <span>${speechText}</span></p>`;
-
-        const response = await fetch('/api/translate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: speechText })
-        });
-        const data = await response.json();
-        output.innerHTML += `<p class='translated-text'>Translated: <span>${data.translatedText}</span></p>`;
-        finalText += `\n${data.translatedText}`;
-        downloadButton.classList.remove('hidden');
-      };
-
-      recognition.onerror = (event) => {
-        console.error("Recognition error:", event.error);
-      };
-    }
-
-    startButton.onclick = () => {
-      startButton.disabled = true;
-      stopButton.disabled = false;
-      stopButton.classList.remove('disabled');
-      initSpeechRecognition();
-      recognition.start();
-    };
-
-    stopButton.onclick = () => {
-      startButton.disabled = false;
-      stopButton.disabled = true;
-      stopButton.classList.add('disabled');
-      recognition.stop();
-    };
-
-    downloadButton.onclick = () => {
-      const doc = new jsPDF();
-      doc.text(finalText, 10, 10);
-      doc.save('transcription.pdf');
-    };
-  </script>
-</body>
-</html>
