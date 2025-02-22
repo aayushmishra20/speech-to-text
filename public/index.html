@@ -1,27 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speech-to-Text Translator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
-</head>
-<body class="bg-gradient-to-br from-blue-200 to-purple-300 min-h-screen flex items-center justify-center">
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl text-center relative overflow-hidden">
-    <div class="absolute top-0 left-0 w-20 h-20 bg-purple-500 rounded-br-full"></div>
-    <div class="absolute bottom-0 right-0 w-20 h-20 bg-blue-500 rounded-tl-full"></div>
+  </head>
+  <style>
+  body {
+  background: linear-gradient(to bottom right, #90CDF4, #9F7AEA);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: relative;
+  width: 600px;
+  height: 600px;
+}
+
+.overlay-top, .overlay-bottom {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: #805AD5;
+  border-radius: 50%;
+}
+
+.overlay-top {
+  top: -25px;
+  left: -25px;
+}
+
+.overlay-bottom {
+  bottom: -25px;
+  right: -25px;
+}
+
+h1 {
+  color: #2D3748;
+  margin-bottom: 20px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.start-button, .stop-button, .download-button {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.start-button {
+  background: #48BB78;
+  color: white;
+}
+
+.stop-button {
+  background: #E53E3E;
+  color: white;
+}
+
+.stop-button.disabled {
+  opacity: 0.5;
+}
+
+.download-button {
+  background: #3182CE;
+  color: white;
+  display: none;
+  margin-top: 20px;
+}
+
+.output {
+  background: #EDF2F7;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: left;
+  height: 400px;
+  
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.detected-text span {
+  color: #3182CE;
+  font-weight: bold;
+}
+
+.translated-text span {
+  color: #9F7AEA;
+  font-weight: bold;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+
+<body>
+  <div class="container">
+    <div class="overlay-top"></div>
+    <div class="overlay-bottom"></div>
     
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Speech-to-Text Translator</h1>
+    <h1>Speech-to-Text Translator</h1>
     
-    <div class="flex justify-center space-x-4 mb-6">
-      <button id="startButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full shadow-md">Start Listening</button>
-      <button id="stopButton" disabled class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-full shadow-md opacity-50">Stop Listening</button>
+    <div class="button-group">
+      <button id="startButton" class="start-button">Start Listening</button>
+      <button id="stopButton" disabled class="stop-button">Stop Listening</button>
     </div>
     
-    <div id="output" class="bg-gray-100 p-4 rounded-lg shadow-inner h-40 overflow-auto text-left text-gray-700 border-l-4 border-blue-500"></div>
+    <div id="output" class="output"></div>
     
-    <button id="downloadButton" class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-md hidden">Download as PDF</button>
+    <button id="downloadButton" class="download-button hidden">Download as PDF</button>
   </div>
 
   <script>
@@ -39,7 +144,7 @@
 
       recognition.onresult = async (event) => {
         const speechText = event.results[event.results.length - 1][0].transcript;
-        output.innerHTML += `<p class='text-gray-800 font-semibold'>Detected: <span class='text-blue-500'>${speechText}</span></p>`;
+        output.innerHTML += `<p class='detected-text'>Detected: <span>${speechText}</span></p>`;
 
         const response = await fetch('/api/translate', {
           method: 'POST',
@@ -47,9 +152,9 @@
           body: JSON.stringify({ text: speechText })
         });
         const data = await response.json();
-        output.innerHTML += `<p class='text-gray-800 font-semibold'>Translated: <span class='text-purple-500'>${data.translatedText}</span></p>`;
+        output.innerHTML += `<p class='translated-text'>Translated: <span>${data.translatedText}</span></p>`;
         finalText += `\n${data.translatedText}`;
-        downloadButton.style.display = 'block';
+        downloadButton.classList.remove('hidden');
       };
 
       recognition.onerror = (event) => {
@@ -60,7 +165,7 @@
     startButton.onclick = () => {
       startButton.disabled = true;
       stopButton.disabled = false;
-      stopButton.classList.remove('opacity-50');
+      stopButton.classList.remove('disabled');
       initSpeechRecognition();
       recognition.start();
     };
@@ -68,7 +173,7 @@
     stopButton.onclick = () => {
       startButton.disabled = false;
       stopButton.disabled = true;
-      stopButton.classList.add('opacity-50');
+      stopButton.classList.add('disabled');
       recognition.stop();
     };
 
